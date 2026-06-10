@@ -128,6 +128,10 @@ h2 {
   text-align: center;
 }
 
+.status-pill:empty {
+  display: none;
+}
+
 .participant-strip,
 .metrics-grid,
 section {
