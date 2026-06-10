@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Rally Participant Pass</title>
+    <meta name="theme-color" content="#2f2052" />
+    <meta name="referrer" content="no-referrer" />
+    <meta property="og:title" content="Rally Split" />
+    <meta property="og:description" content="Group expenses, settled cleanly." />
+    <meta property="og:image" content="./assets/brand/og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="./assets/brand/favicon.ico" sizes="any" />
+    <link rel="icon" href="./assets/brand/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./assets/brand/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./styles.css?v=20260609-review" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow" data-i18n="eyebrow">Participant Pass</p>
+          <h1 id="eventName">Friday Dinner</h1>
+        </div>
+        <div class="top-actions" aria-label="page controls">
+          <button class="icon-button" id="languageButton" type="button" aria-label="Switch language">JA</button>
+          <button class="icon-button" id="shareButton" type="button" aria-label="Share">↗</button>
+        </div>
+      </header>
+
+      <section class="summary-band" aria-labelledby="summaryTitle">
+        <div>
+          <p class="section-label" id="summaryTitle" data-i18n="yourBalance">Your balance</p>
+          <p class="balance" id="participantBalance">¥0</p>
+          <p class="balance-note" id="balanceNote"></p>
+        </div>
+        <div class="status-pill" id="statusPill"></div>
+      </section>
+
+      <section class="participant-strip" aria-labelledby="participantTitle">
+        <div class="section-row">
+          <h2 id="participantTitle" data-i18n="viewAs">Confirm your name</h2>
+          <span id="participantCount"></span>
+        </div>
+        <form class="identify-form" id="participantIdentifyForm" autocomplete="off">
+          <label class="sr-only" for="participantNameInput" data-i18n="participantNameLabel">Participant name</label>
+          <input id="participantNameInput" name="participantName" type="text" maxlength="80" autocomplete="name" />
+          <button class="primary-button" id="participantIdentifyButton" type="submit" data-i18n="confirmName">Confirm</button>
+        </form>
+        <div class="identify-panel hidden" id="identifyPanel"></div>
+      </section>
+
+      <section class="metrics-grid" aria-label="event metrics">
+        <article>
+          <span data-i18n="totalSpend">Total spend</span>
+          <strong id="totalSpend">¥0</strong>
+        </article>
+        <article>
+          <span data-i18n="perPerson">Per person</span>
+          <strong id="perPerson">¥0</strong>
+        </article>
+        <article>
+          <span data-i18n="payments">Payments</span>
+          <strong id="paymentCount">0</strong>
+        </article>
+      </section>
+
+      <section aria-labelledby="settlementTitle">
+        <div class="section-row">
+          <h2 id="settlementTitle" data-i18n="settlement">Settlement</h2>
+          <span data-i18n="aiPreview">AI preview</span>
+        </div>
+        <div class="list" id="settlementList"></div>
+      </section>
+
+      <section aria-labelledby="expenseTitle">
+        <div class="section-row">
+          <h2 id="expenseTitle" data-i18n="expenses">Expenses</h2>
+          <span data-i18n="live">Live</span>
+        </div>
+        <div class="list" id="expenseList"></div>
+      </section>
+
+      <section class="cta-band hidden" id="ctaBand" aria-labelledby="ctaTitle">
+        <div>
+          <h2 id="ctaTitle" data-i18n="ctaTitle">Keep this event organized</h2>
+          <p data-i18n="ctaBody">Open Rally to add payments, reduce settlement steps, and invite the next participant.</p>
+        </div>
+        <button
+          class="primary-button"
+          type="button"
+          id="openAppButton"
+          data-deep-link-base="rally://participant-pass"
+          data-app-store-url=""
+          data-waitlist-url="/waitlist?source=participant_pass"
+          data-i18n="openApp"
+        >Open Rally</button>
+      </section>
+    </main>
+
+    <script src="./app.js" data-api-base-url="https://cgkuqwxamowqdwqaclxq.functions.supabase.co"></script>
+  </body>
+</html>
