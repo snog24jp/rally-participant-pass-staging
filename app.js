@@ -27,6 +27,8 @@ const messages = {
     appLater: "Rallyアプリを開いています",
     loading: "読み込み中",
     loadFailed: "共有リンクを確認できませんでした",
+    missingSharedLink: "共有リンクから開いてください",
+    missingSharedLinkHint: "このページ単体では精算情報を表示できません。Rallyアプリでイベントの共有リンクを作成し、そのリンクから開いてください。",
     linkExpired: "共有リンクは失効または期限切れです。幹事に新しいリンクを確認してください。",
     participantLinkExpired: "本人確認済みリンクは失効しました。もう一度、自分の名前を入力してください。",
     chooseParticipant: "自分の名前を入力してください",
@@ -75,6 +77,8 @@ const messages = {
     appLater: "Opening Rally",
     loading: "Loading",
     loadFailed: "Could not verify this shared link",
+    missingSharedLink: "Open from a shared link",
+    missingSharedLinkHint: "This page cannot show settlement details by itself. Create an event share link in the Rally app, then open that link.",
     linkExpired: "This shared link was revoked or expired. Ask the organizer for a new link.",
     participantLinkExpired: "Your identified link was revoked or expired. Enter your name again.",
     chooseParticipant: "Enter your name",
@@ -101,7 +105,10 @@ const messages = {
 };
 
 let locale = "ja";
-let eventShareToken = new URLSearchParams(location.search).get("eventShareToken") ?? defaultEventShareToken;
+const initialParams = new URLSearchParams(location.search);
+const providedEventShareToken = initialParams.get("eventShareToken")?.trim() ?? "";
+const shouldUseDefaultEventShareToken = !providedEventShareToken && isLocalPreview();
+let eventShareToken = providedEventShareToken || (shouldUseDefaultEventShareToken ? defaultEventShareToken : "");
 let eventData = null;
 let balanceData = null;
 let selectedParticipantId = null;
@@ -120,6 +127,10 @@ function localAPIBaseURL() {
     return "http://127.0.0.1:54321/functions/v1";
   }
   return `${location.origin}/functions/v1`;
+}
+
+function isLocalPreview() {
+  return location.hostname === "127.0.0.1" || location.hostname === "localhost";
 }
 
 function t(key) {
@@ -172,6 +183,10 @@ async function loadEvent() {
   loadError = null;
   participantSessionErrorCode = null;
   renderLoading();
+  if (!eventShareToken) {
+    render();
+    return;
+  }
   try {
     eventData = await apiPost("participant-resolve-event", { eventShareToken });
     participantViewToken = participantViewToken || sessionStorage.getItem(participantTokenStorageKey());
@@ -243,7 +258,7 @@ function stripUnsafeParticipantTokenFromURL() {
   const params = new URLSearchParams(location.search);
   if (!params.has("participantViewToken")) return;
   params.delete("participantViewToken");
-  if (!params.has("eventShareToken")) params.set("eventShareToken", eventShareToken);
+  if (!params.has("eventShareToken") && eventShareToken) params.set("eventShareToken", eventShareToken);
   history.replaceState(null, "", `${location.pathname}?${params.toString()}`);
 }
 
@@ -266,6 +281,10 @@ function render() {
     renderError();
     return;
   }
+  if (!eventShareToken) {
+    renderMissingSharedLink();
+    return;
+  }
   if (!eventData) {
     renderLoading();
     return;
@@ -283,6 +302,23 @@ function render() {
   renderMetrics();
   renderExpenses();
   renderSettlements();
+}
+
+function renderMissingSharedLink() {
+  document.getElementById("eventName").textContent = "Rally";
+  document.getElementById("participantBalance").textContent = t("missingSharedLink");
+  document.getElementById("balanceNote").textContent = t("missingSharedLinkHint");
+  document.getElementById("statusPill").textContent = "";
+  resetIdentifyForm({ disabled: true });
+  document.getElementById("participantCount").textContent = "0";
+  document.getElementById("totalSpend").textContent = "-";
+  document.getElementById("perPerson").textContent = "-";
+  document.getElementById("paymentCount").textContent = "-";
+  document.getElementById("expenseList").replaceChildren();
+  document.getElementById("settlementList").replaceChildren();
+  document.getElementById("identifyPanel").classList.add("hidden");
+  document.getElementById("identifyPanel").replaceChildren();
+  document.getElementById("ctaBand").classList.add("hidden");
 }
 
 function renderError() {
