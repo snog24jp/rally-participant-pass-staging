@@ -267,6 +267,7 @@ function renderLoading() {
   document.getElementById("participantBalance").textContent = t("loading");
   document.getElementById("balanceNote").textContent = "";
   document.getElementById("statusPill").textContent = "";
+  setDataBadgesVisible(false);
   document.getElementById("ctaBand").classList.add("hidden");
 }
 
@@ -299,9 +300,15 @@ function render() {
   }
 
   renderSummary();
+  setDataBadgesVisible(true);
   renderMetrics();
   renderExpenses();
   renderSettlements();
+}
+
+function setDataBadgesVisible(isVisible) {
+  document.getElementById("settlementBadge").classList.toggle("hidden", !isVisible);
+  document.getElementById("expenseBadge").classList.toggle("hidden", !isVisible);
 }
 
 function renderMissingSharedLink() {
@@ -316,6 +323,7 @@ function renderMissingSharedLink() {
   document.getElementById("paymentCount").textContent = "-";
   document.getElementById("expenseList").replaceChildren();
   document.getElementById("settlementList").replaceChildren();
+  setDataBadgesVisible(false);
   document.getElementById("identifyPanel").classList.add("hidden");
   document.getElementById("identifyPanel").replaceChildren();
   document.getElementById("ctaBand").classList.add("hidden");
@@ -335,6 +343,7 @@ function renderError() {
   document.getElementById("paymentCount").textContent = "-";
   document.getElementById("expenseList").replaceChildren();
   document.getElementById("settlementList").replaceChildren();
+  setDataBadgesVisible(false);
   document.getElementById("identifyPanel").classList.add("hidden");
   document.getElementById("identifyPanel").replaceChildren();
   document.getElementById("ctaBand").classList.add("hidden");
@@ -352,6 +361,7 @@ function renderParticipantPrompt() {
   document.getElementById("settlementList").replaceChildren(
     listItem({ title: t("chooseParticipant"), meta: t("missingName"), amount: "" })
   );
+  setDataBadgesVisible(false);
   document.getElementById("identifyPanel").classList.add("hidden");
   document.getElementById("identifyPanel").replaceChildren();
   renderOrganizerRecovery(participantSessionErrorCode ?? (participantSessionNotice ? "participant_view_expired" : "choose_participant_or_missing_name"));
